@@ -1,0 +1,34 @@
+## USAGE: Run the turtle service with the simple: docker-compose run --rm turtle
+
+version: "3"
+services:
+  ### provides a development environment for turtle sim demos
+  turtle:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - usr_name=turtle
+        - usr_group=turtle
+        - usr_uid=1000
+        - usr_gid=1000
+    tty: true
+    stdin_open: true
+    # network_mode: host
+    command: "/bin/bash"
+    environment:
+      - "DISPLAY=$DISPLAY"
+      - "XAUTHORITY=/tmp/.docker.xauth"
+    volumes:
+      # First, mount the source code from the host to the container
+      - ./ros_workspace:/home/turtle/ros_workspace
+      # Also mount the rosbag folder for convenient data logging input/output
+      - ./rosbags:/rosbags:rw
+      # Mount the warp-client to automate testing
+      # - ../../warp-client:/warp-client
+      # sync timezone with host and ensure X11 settings
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+      - /dev/log:/dev/log:rw
