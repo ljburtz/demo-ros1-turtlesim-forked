@@ -14,7 +14,7 @@ services:
         - usr_gid=1000
     tty: true
     stdin_open: true
-    # network_mode: host
+    network_mode: host
     command: "/bin/bash"
     environment:
       - "DISPLAY=$DISPLAY"
