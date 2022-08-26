@@ -1,0 +1,26 @@
+<launch>
+  <!-- launch simulator environment -->
+  <node name="turtlesim" pkg="turtlesim" type="turtlesim_node" />
+
+  <!-- launch user nodes -->
+  <!-- tech stack under test -->
+  <node name="listener" pkg="turtle_odometry" type="turtle_test.py" output="screen" />
+
+
+  <!--===========
+  TEST SPECIFIC
+  =============-->
+
+  <!-- launch data recorder -->
+  <node pkg="rosbag" type="record" name="rosbag_recorder" output="screen" args="-a" />
+
+  <!-- launch user test metrics -->
+  <!-- node(s) that calculate (and publish) test metrics -->
+
+  <!-- launch user tests -->
+  <!-- main responsibiities: setUp(), assert at end of test and teardDown() -->
+  <test test-name="turtle" pkg="turtle_odometry" type="TestTurtle.py" />
+
+  <!-- (optional) launch visualizations -->
+  <!--  rviz / plotjuggler / foxglove if live monitoring of test is wanted -->
+</launch>
