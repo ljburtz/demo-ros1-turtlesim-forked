@@ -12,6 +12,8 @@ if test -f "$VOLUME_EXEC_COUNTER"; then # if workspace already built
     # Avoid the user's misunderstanding that a new image build => a new volume
     echo "volume has been attached $counter times since its creation"
     echo $counter > $VOLUME_EXEC_COUNTER
+    echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+    echo "source ~/ros_workspace/devel/setup.bash --extend" >> ~/.bashrc
 
   else  # setup the catkin workspace for the first time
     echo "setting up catkin workspace for the first time"
@@ -22,6 +24,7 @@ if test -f "$VOLUME_EXEC_COUNTER"; then # if workspace already built
     catkin build
     source devel/setup.bash --extend
 
+    echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
     echo "source ~/ros_workspace/devel/setup.bash --extend" >> ~/.bashrc
     # mark the volume as not empty/already setup
     echo 1 > $VOLUME_EXEC_COUNTER
@@ -37,6 +40,7 @@ echo "alias jj='jupyter notebook'" >> ~/.bashrc
 echo "alias tt='tmux new'" >> ~/.bashrc
 echo "alias rc='roscore &'" >> ~/.bashrc
 echo "alias ts='rosrun turtlesim turtlesim_node'" >> ~/.bashrc
+echo "alias ww='cd /warp-client && pip install -e . && cd'" >> ~/.bashrc
 
 # Setup for tmux
 echo "set-option -g default-command \"exec /bin/bash\"" > ~/.tmux.conf

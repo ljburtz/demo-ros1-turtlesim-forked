@@ -26,8 +26,8 @@ services:
       - ./ros_workspace/src:/home/turtle/ros_workspace/src
       # Also mount the rosbag folder for convenient data logging input/output
       - ./rosbags:/rosbags:rw
-      # Mount the warp-client to automate testing
-      # - ../../warp-client:/warp-client
+      # (optional) Mount the warp-client to automate testing
+      - ../warp-client:/warp-client
       # sync timezone with host and ensure X11 settings
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"

@@ -1,0 +1,19 @@
+version: 0.1.0
+
+project: ros1-turtlesim
+jobs:
+  basic_tests: # Overall job name
+    type: test
+    runtime:
+      simulator: turtlesim
+      framework: ros1:0
+    timeout: 2 #minutes
+    scenarios:
+      defaults: # Global to all scenarios, and overriden in specific scenarios.
+        subscriptions:
+          pose: turtle1/pose
+          result: turtle1/result
+      settings:
+        - name: turtle
+          ros1_testpackage: turtle_odometry
+          ros1_testfile: test_turtle.launch

@@ -26,6 +26,7 @@ RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers \
 # RUN AS END-USER
 USER ${usr_name}
 ENV HOME="/home/${usr_name}"
+ENV PATH="$PATH:$HOME/.local/bin"
 WORKDIR ${HOME}
 
 # prep common folders
