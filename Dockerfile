@@ -29,9 +29,9 @@ ENV HOME="/home/${usr_name}"
 WORKDIR ${HOME}
 
 # prep common folders
-RUN mkdir -p ${HOME}/ros_workspace && \
-  mkdir -p ${HOME}/logs          && \
-  mkdir -p ${HOME}/.ros          && \
+RUN mkdir -p ${HOME}/ros_workspace/src && \
+  mkdir -p ${HOME}/logs                && \
+  mkdir -p ${HOME}/.ros                && \
   mkdir -p ${HOME}/.gazebo
 
 ## KEEP THESE LINES LAST:

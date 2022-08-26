@@ -20,8 +20,10 @@ services:
       - "DISPLAY=$DISPLAY"
       - "XAUTHORITY=/tmp/.docker.xauth"
     volumes:
-      # First, mount the source code from the host to the container
-      - ./ros_workspace:/home/turtle/ros_workspace
+      # First, create a named volume to make the build data persistent
+      - workspace_data:/home/turtle/ros_workspace/
+      # Then, mount the source code from the host to the container
+      - ./ros_workspace/src:/home/turtle/ros_workspace/src
       # Also mount the rosbag folder for convenient data logging input/output
       - ./rosbags:/rosbags:rw
       # Mount the warp-client to automate testing
@@ -32,3 +34,7 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
       - /dev/log:/dev/log:rw
+
+# Declare the volume used to hold the ROS workspace build artifacts
+volumes:
+  workspace_data:
