@@ -27,7 +27,10 @@ services:
       # Also mount the rosbag folder for convenient data logging input/output
       - ./rosbags:/rosbags:rw
       # (optional) Mount the warp-client to automate testing
+      # use alias 'ww' to pip install -e warp-client
+      # (the api key and config are mounted from the host)
       - ../warp-client:/warp-client
+      - ~/.warp/config:/home/turtle/.warp/config
       # sync timezone with host and ensure X11 settings
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
