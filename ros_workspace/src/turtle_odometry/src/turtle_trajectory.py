@@ -10,6 +10,7 @@ import threading
 class TurtleTrajectory():
     def __init__(self, name) -> None:
         self.name = name
+
         self.pub_velocity = rospy.Publisher(
             f"/{self.name}/cmd_vel", Twist, queue_size=1
         )
@@ -18,21 +19,11 @@ class TurtleTrajectory():
             f"/{self.name}/pose", TurtlePose, self.callback_gt_pose
         )
 
-        # setup test parameters
-        rospy.wait_for_service(f"/{self.name}/teleport_absolute")
-        rospy.wait_for_service(f"/{self.name}/set_pen")
-        rospy.wait_for_service(f"/clear")
-        self.srv_teleport_absolute = rospy.ServiceProxy(f"/{self.name}/teleport_absolute", TeleportAbsolute)
-        self.srv_set_pen = rospy.ServiceProxy(f"/{self.name}/set_pen", SetPen)
-        self.srv_clear = rospy.ServiceProxy(f"/clear", Empty)
-        self.srv_set_pen(r=255, g=255, b=255, width=5, off=False)
-        self.srv_teleport_absolute(x=1, y=1, theta=0)
-        self.srv_clear()
-
     # setup a command publisher in the background to avoid ROS timing issues
         self.command_event = threading.Event()
         self.command_thread = threading.Thread(target=self.fixed_rate_commands)
         self.command_thread.start()
+
 
     def stop_commands(self):
         self.command_event.set()
@@ -98,16 +89,14 @@ class TurtleTrajectory():
             self.stop_commands()
 
 
-
-
 def main():
     rospy.init_node("turtle_trajectory")
     try:
         tj = TurtleTrajectory("turtle1")
-        rospy.sleep(5)
-        print("starting turtle trajectory")
+        rospy.loginfo("starting turtle trajectory")
         tj.closed_loop_square(speed=5., segment_length=10.)
-        tj.stop_commands()  # to exit script
+        tj.stop_commands()  # to stop publisher
+        rospy.sleep(1)
         # rospy.spin()      # to keep script running
     except rospy.ROSInterruptException:
         pass

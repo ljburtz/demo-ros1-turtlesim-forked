@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import rospy
+from std_srvs.srv import Empty as EmptySrv
+from std_srvs.srv import EmptyResponse
 from turtlesim.msg import Pose as TurtlePose
 import random
 import numpy as np
@@ -7,15 +9,15 @@ import numpy as np
 class TurtleOdom():
     def __init__(self, name):
         self.name = name
+        self.trajectory_ready = False
         self.cb_throttle = rospy.Time.now()
 
         # initialize odometry estimate
-        self.prev_pose = rospy.wait_for_message(
+        self.prev_pose = self.odometry = rospy.wait_for_message(
             f'/{self.name}/pose',
             TurtlePose,
             timeout=None
         )
-        self.odometry = self.prev_pose
 
         # setup odometry publisher
         self.pub_odometry = rospy.Publisher(
@@ -23,6 +25,14 @@ class TurtleOdom():
             TurtlePose,
             queue_size=2
         )
+
+        # standard: advertize a service to reset odometry estimate
+        self.srv_reset = rospy.Service(
+            f'{self.name}/odom_reset',
+            EmptySrv,
+            self.cb_reset_odom
+        )
+
         # for demo purposes: mock odometry
         # subscribe to pose ground truth and register a callback that will add noise and calculate the odometry
         self.sub_pose = rospy.Subscriber(
@@ -32,6 +42,20 @@ class TurtleOdom():
         )
 
         rospy.loginfo(f'TurtleOdometry initialized with coordinates: x={self.prev_pose.x} / y={self.prev_pose.y}')
+
+    def cb_reset_odom(self, req):
+        '''reset the odometry estimate
+        here, we just set it to the current ground truth pose
+        '''
+        rospy.logwarn("resetting odometry estimate")
+        self.cb_throttle = rospy.Time.now()
+        self.prev_pose = self.odometry = rospy.wait_for_message(
+            f'/{self.name}/pose',
+            TurtlePose,
+            timeout=None
+        )
+        return EmptyResponse()
+
 
     def cb_odometry(self, odom):
         ### assumes that the turtle only goes forward and spot turn
@@ -48,8 +72,8 @@ class TurtleOdom():
         delta_forward = np.sqrt(delta_x**2 + delta_y**2)
         self.prev_pose = odom
 
-        noise_factor_theta = 0.1
-        noise_factor_forward = 0.5
+        noise_factor_theta = 0.01
+        noise_factor_forward = 0.1
         noise_theta = noise_factor_theta * random.uniform(-1, 1)
         noise_forward = noise_factor_forward * random.uniform(-1, 1)
 
@@ -69,7 +93,6 @@ class TurtleOdom():
 def main():
     rospy.init_node("turtle_odometry")
     try:
-        rospy.sleep(3)
         to = TurtleOdom("turtle1")
         rospy.spin()
     except rospy.ROSInterruptException:
