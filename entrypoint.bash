@@ -42,6 +42,10 @@ echo "alias rc='roscore &'" >> ~/.bashrc
 echo "alias ts='rosrun turtlesim turtlesim_node'" >> ~/.bashrc
 echo "alias ww='cd /warp-client && pip install -e . && cd'" >> ~/.bashrc
 
+# Setup rqt and plotjuggler for high DPI screens
+echo "alias rqt_graph='QT_SCALE_FACTOR=1.5 rqt_graph'" >> ~/.bashrc
+echo "alias pj='rosrun plotjuggler plotjuggler'" >> ~/.bashrc
+
 # Setup for tmux
 echo "set-option -g default-command \"exec /bin/bash\"" > ~/.tmux.conf
 {

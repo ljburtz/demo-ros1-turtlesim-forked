@@ -55,6 +55,10 @@ RUN jupyter nbextension install --user --py ipympl \
 #   <package> \
 # && sudo rm -rf /var/lib/apt/lists/* \
 # && sudo apt-get clean
+RUN sudo apt-get update -y && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  ros-noetic-plotjuggler-ros \
+&& sudo rm -rf /var/lib/apt/lists/* \
+&& sudo apt-get clean
 
 COPY --chown=${usr_name}:${usr_group} entrypoint.bash /entrypoint.bash
 ENTRYPOINT ["/entrypoint.bash"]
