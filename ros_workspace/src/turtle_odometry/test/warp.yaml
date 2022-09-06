@@ -7,13 +7,14 @@ jobs:
     runtime:
       simulator: turtlesim
       framework: ros1:0
-    timeout: 2 #minutes
+    timeout: 2 # minutes
     scenarios:
       defaults: # Global to all scenarios, and overriden in specific scenarios.
+        reuse-master: False  # rostest will use the host's rosmaster instead of spining up an isolated ros network
         subscriptions:
           pose: turtle1/pose
-          result: turtle1/result
+          result: turtle1/odometry
       settings:
         - name: turtle
           ros1_testpackage: turtle_odometry
-          ros1_testfile: test_turtle.launch
+          ros1_testfile: turtle_odometry.launch

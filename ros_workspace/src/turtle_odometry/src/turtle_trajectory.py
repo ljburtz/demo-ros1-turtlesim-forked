@@ -10,7 +10,6 @@ import threading
 class TurtleTrajectory():
     def __init__(self, name) -> None:
         self.name = name
-
         self.pub_velocity = rospy.Publisher(
             f"/{self.name}/cmd_vel", Twist, queue_size=1
         )
@@ -18,8 +17,7 @@ class TurtleTrajectory():
         self.sub_gt_pose = rospy.Subscriber(
             f"/{self.name}/pose", TurtlePose, self.callback_gt_pose
         )
-
-    # setup a command publisher in the background to avoid ROS timing issues
+        # setup a command publisher in the background to avoid ROS timing issues
         self.command_event = threading.Event()
         self.command_thread = threading.Thread(target=self.fixed_rate_commands)
         self.command_thread.start()
