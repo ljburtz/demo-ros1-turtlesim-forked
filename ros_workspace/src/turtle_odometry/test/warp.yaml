@@ -2,7 +2,7 @@ version: 0.1.0
 
 project: ros1-turtlesim
 jobs:
-  basic_tests: # Overall job name
+  basic_turtle: # Overall job name
     type: test
     runtime:
       simulator: turtlesim
