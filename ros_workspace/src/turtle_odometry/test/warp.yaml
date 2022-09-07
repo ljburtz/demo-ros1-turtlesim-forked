@@ -18,3 +18,4 @@ jobs:
         - name: turtle
           ros1_testpackage: turtle_odometry
           ros1_testfile: turtle_odometry.launch
+          ros1_postprocess: turtle_post_process.py
