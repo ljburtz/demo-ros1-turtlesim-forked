@@ -126,7 +126,7 @@ fig.write_html(args['out_folder'] + "/time_deltas.html")
 
 # plot metrics as a function of test time
 start_time = matched_messages[0]['groundtruth'].timestamp.to_sec()
-px.scatter(
+fig = px.scatter(
     x=[match['groundtruth'].timestamp.to_sec() - start_time for match in matched_messages],
     y=[
         error_horiz(match['groundtruth'], match['estimated'])
@@ -138,7 +138,7 @@ px.scatter(
 fig.write_html(args['out_folder'] + "/error_horiz_time.html")
 
 start_time = matched_messages[0]['groundtruth'].timestamp.to_sec()
-px.scatter(
+fig = px.scatter(
     x=[match['groundtruth'].timestamp.to_sec() - start_time for match in matched_messages],
     y=[
         error_yaw(match['groundtruth'], match['estimated'])
