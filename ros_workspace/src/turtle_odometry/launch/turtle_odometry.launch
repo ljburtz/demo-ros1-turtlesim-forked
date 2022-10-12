@@ -1,6 +1,13 @@
+<!-- user provided launch test file.
+must define the user's own tech stach + test cases
+this file will the be included in a top-level rostest.launch file, with additional resources provided
+e.g. simulator / rosbag recorder / param server (based on user specificed artefact.yaml)
+-->
+
 <launch>
+
   <!-- launch simulator environment -->
-  <node name="turtlesim" pkg="turtlesim" type="turtlesim_node" />
+  <!-- now provided by artefact ros1 runner, based on artefact.yaml -->
 
   <!-- launch user nodes -->
   <!-- tech stack under test -->
@@ -12,7 +19,7 @@
   =============-->
 
   <!-- launch data recorder -->
-  <node pkg="rosbag" type="record" name="rosbag_recorder" output="screen" args="-a" />
+  <!-- rosbag record now provided by the artefact ros1 runner-->
 
   <!-- launch user test metrics -->
   <!-- node(s) that calculate (and publish) test metrics -->

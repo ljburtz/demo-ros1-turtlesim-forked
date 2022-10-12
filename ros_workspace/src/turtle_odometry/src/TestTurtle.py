@@ -36,7 +36,7 @@ class TestTurtle(unittest.TestCase):
         # prepare trajectory commands for the test
         self.turtle_trajectory = TurtleTrajectory(NAME, start_position)
         rospy.loginfo("setting up turtle trajectory")
-        # reset odometry to pose of test setup
+        # init odometry to match the pose of the test setup
         rospy.wait_for_service(f"/{NAME}/odom_reset")
         self.srv_reset_odom = rospy.ServiceProxy(f"/{NAME}/odom_reset", EmptySrv)
         self.srv_reset_odom()
