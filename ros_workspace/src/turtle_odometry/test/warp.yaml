@@ -20,6 +20,6 @@ jobs:
           ros1_testfile: turtle_odometry.launch
           ros1_postprocess: turtle_post_process.py
           params:
-            test/param1: [1]
-            # test/param1: [3, 2, 1]
+            # test/param1: 1
+            test/param1: [3, 2, 1]
             test/nested_ns/param2: 2.5

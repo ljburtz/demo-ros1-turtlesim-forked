@@ -4,20 +4,35 @@ includes the launch test file defined by the user
  -->
 
 <launch>
-  <arg name="param_file" default='params.yaml' />
+  <arg name="param_file" />
   <arg name="ros1_testpackage" />
   <arg name="ros1_testfile" />
 
   <!-- provide parameters from artefact.yaml onto rosparam server -->
-  <rosparam file="$(eval find(ros1_testpackage) + '/test/' + param_file)" command="load" />
+  <rosparam
+    file="$(arg param_file)"
+    command="load"
+  />
 
   <!-- provide a simulator environment -->
-  <node name="turtlesim" pkg="turtlesim" type="turtlesim_node" />
+  <node
+    name="turtlesim"
+    pkg="turtlesim"
+    type="turtlesim_node"
+  />
 
   <!-- provide a data recorder -->
-  <node pkg="rosbag" type="record" name="rosbag_recorder" output="screen" args="-a" />
+  <node
+    pkg="rosbag"
+    type="record"
+    name="rosbag_recorder"
+    output="screen"
+    args="-a"
+  />
 
   <!-- include the launch test file defined by the user in artefact.yaml -->
-  <include file="$(eval find(ros1_testpackage) + '/launch/' + ros1_testfile)" />
+  <include
+    file="$(eval find(ros1_testpackage) + '/launch/' + ros1_testfile)"
+  />
 
 </launch>

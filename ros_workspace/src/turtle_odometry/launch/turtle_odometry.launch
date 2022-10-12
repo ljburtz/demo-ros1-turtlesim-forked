@@ -11,7 +11,12 @@ e.g. simulator / rosbag recorder / param server (based on user specificed artefa
 
   <!-- launch user nodes -->
   <!-- tech stack under test -->
-  <node name="turtle_odom" pkg="turtle_odometry" type="turtle_odom.py" output="screen" />
+  <node
+    name="turtle_odom"
+    pkg="turtle_odometry"
+    type="turtle_odom.py"
+    output="screen"
+  />
 
 
   <!--===========
