@@ -41,19 +41,19 @@ class TurtleOdom():
             callback=self.cb_odometry
         )
 
-        rospy.loginfo(f'TurtleOdometry initialized with coordinates: x={self.prev_pose.x} / y={self.prev_pose.y}')
+        rospy.loginfo(f'TurtleOdometry initialized with coordinates: x={self.prev_pose.x:.2f} / y={self.prev_pose.y:.2f}')
 
     def cb_reset_odom(self, req):
         '''reset the odometry estimate
         here, we just set it to the current ground truth pose
         '''
-        rospy.logwarn("resetting odometry estimate")
         self.cb_throttle = rospy.Time.now()
         self.prev_pose = self.odometry = rospy.wait_for_message(
             f'/{self.name}/pose',
             TurtlePose,
             timeout=None
         )
+        rospy.logwarn(f"reset odometry estimate with coordinates: x={self.prev_pose.x:.2f} / y={self.prev_pose.y:.2f}")
         return EmptyResponse()
 
 

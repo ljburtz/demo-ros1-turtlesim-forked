@@ -7,9 +7,9 @@ import numpy as np
 import threading
 
 class TurtleTrajectory():
-    def __init__(self, name, start_position) -> None:
+    def __init__(self, name, start_pose) -> None:
         self.name = name
-        self.start_position = start_position
+        self.start_pose = start_pose
         self.pub_velocity = rospy.Publisher(
             f"/{self.name}/cmd_vel", Twist, queue_size=1
         )
@@ -46,16 +46,16 @@ class TurtleTrajectory():
         # the turtlesim area is 11 by 11 meters
         # (0, 0) is bottom left / x horizontal to the right / y vertical to the top
 
-        assert(self.start_position['theta'] == 0)  # only supported
-        assert(self.start_position['x'] + segment_length <= 11.) # max size of turtlesim
-        assert(self.start_position['y'] + segment_length <= 11.) # max size of turtlesim
+        assert(self.start_pose['theta'] == 0)  # only supported
+        assert(self.start_pose['x'] + segment_length <= 11.) # max size of turtlesim
+        assert(self.start_pose['y'] + segment_length <= 11.) # max size of turtlesim
 
         try:
             r = rospy.Rate(70)  # match ground truth pose check rate with its publish rate
 
             # right
             self.velocity = Twist(linear=Point(x=speed))
-            while self.gt_pose.x < segment_length + self.start_position['x']:
+            while self.gt_pose.x < segment_length + self.start_pose['x']:
                 r.sleep()
             # spot turn left
             self.velocity = Twist(angular=Point(z=speed/3))
@@ -64,7 +64,7 @@ class TurtleTrajectory():
 
             # up
             self.velocity = Twist(linear=Point(x=speed))
-            while self.gt_pose.y < segment_length + self.start_position['y']:
+            while self.gt_pose.y < segment_length + self.start_pose['y']:
                 r.sleep()
             # spot turn left
             self.velocity = Twist(angular=Point(z=speed/3))
@@ -73,7 +73,7 @@ class TurtleTrajectory():
 
             # left
             self.velocity = Twist(linear=Point(x=speed))
-            while self.gt_pose.x > self.start_position['x']:
+            while self.gt_pose.x > self.start_pose['x']:
                 r.sleep()
             # spot turn left
             self.velocity = Twist(angular=Point(z=speed/3))
@@ -82,7 +82,7 @@ class TurtleTrajectory():
 
             # down
             self.velocity = Twist(linear=Point(x=speed))
-            while self.gt_pose.y > self.start_position['y']:
+            while self.gt_pose.y > self.start_pose['y']:
                 r.sleep()
             self.velocity = Twist()  # stop
             rospy.sleep(0.1)
@@ -99,15 +99,15 @@ def main():
         from turtlesim.srv import TeleportAbsolute
         rospy.wait_for_service(f"/{NAME}/teleport_absolute")
         srv_teleport_absolute = rospy.ServiceProxy(f"/{NAME}/teleport_absolute", TeleportAbsolute)
-        start_position = {'x': 1, 'y': 1, 'theta': 0}
+        start_pose = {'x': 1, 'y': 1, 'theta': 0}
         srv_teleport_absolute(
-            x=start_position['x'],
-            y=start_position['y'],
-            theta=start_position['theta']
+            x=start_pose['x'],
+            y=start_pose['y'],
+            theta=start_pose['theta']
         )
 
         # run the trajectory
-        tj = TurtleTrajectory(NAME, start_position)
+        tj = TurtleTrajectory(NAME, start_pose)
         rospy.loginfo("starting turtle trajectory")
         tj.closed_loop_square(speed=5., segment_length=5.)
         tj.stop_commands()  # to stop publisher

@@ -10,7 +10,7 @@ from turtle_trajectory import TurtleTrajectory
 
 PKG = 'turtle_odometry'
 NAME = 'turtle1'
-start_position = {'x': 1, 'y': 1, 'theta': 0}
+# start_pose = {'x': 1, 'y': 1, 'theta': 0}
 
 
 class TestTurtle(unittest.TestCase):
@@ -27,14 +27,21 @@ class TestTurtle(unittest.TestCase):
         self.srv_set_pen = rospy.ServiceProxy(f"/{NAME}/set_pen", SetPen)
         self.srv_clear = rospy.ServiceProxy(f"/clear", EmptySrv)
         self.srv_set_pen(r=255, g=255, b=255, width=5, off=False)
+        while not rospy.has_param('test/start_pose'):
+            rospy.sleep(0.1)
+        start_pose = rospy.get_param('test/start_pose', [1, 1, 0])
+        while not rospy.has_param('test/segment_length'):
+            rospy.sleep(0.1)
+        self.segment_length = rospy.get_param('test/segment_length', 5.)
+        self.start_pose = dict(zip(['x', 'y', 'theta'], start_pose))
         self.srv_teleport_absolute(
-            x=start_position['x'],
-            y=start_position['y'],
-            theta=start_position['theta']
+            x=self.start_pose['x'],
+            y=self.start_pose['y'],
+            theta=self.start_pose['theta']
         )
         self.srv_clear()
         # prepare trajectory commands for the test
-        self.turtle_trajectory = TurtleTrajectory(NAME, start_position)
+        self.turtle_trajectory = TurtleTrajectory(NAME, self.start_pose)
         rospy.loginfo("setting up turtle trajectory")
         # init odometry to match the pose of the test setup
         rospy.wait_for_service(f"/{NAME}/odom_reset")
@@ -46,7 +53,7 @@ class TestTurtle(unittest.TestCase):
         rospy.sleep(2)  # log some data while not moving
         self.turtle_trajectory.closed_loop_square(
             speed=5.,
-            segment_length=5.
+            segment_length=self.segment_length
         ) # drive the turtle!
         self.turtle_trajectory.stop_commands()
         rospy.sleep(1)  # log some data after stopped moving
@@ -58,7 +65,7 @@ class TestTurtle(unittest.TestCase):
             TurtlePose,
             timeout=None
         )
-        distance_to_start = np.sqrt((final_pose.x - 1)**2 + (final_pose.y - 1)**2)
+        distance_to_start = np.sqrt((final_pose.x - self.start_pose['x'])**2 + (final_pose.y - self.start_pose['y'])**2)
         rospy.logerr(f"distance to start: {distance_to_start}")
         # check if the turtle moved (= is not at exactly the starting position)
         self.assertNotEqual(
@@ -71,7 +78,7 @@ class TestTurtle(unittest.TestCase):
             distance_to_start,
             0,
             delta=0.5,
-            msg=f"turtle position at end of test is more than 0.5m away from starting position: error in trajectory?"
+            msg=f"turtle position at end of test = {distance_to_start}m is more than 0.5m away from starting position: error in trajectory?"
         )
 
 
