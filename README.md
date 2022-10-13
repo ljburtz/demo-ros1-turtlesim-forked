@@ -32,6 +32,8 @@ For more insight into how artefact simplifies manual robotics development tasks 
 ```
 git clone git@github.com:art-e-fact/demo-ros1-turtlesim.git
 git clone git@github.com:art-e-fact/warp-client.git
+# [temporary] checkout the ros1 branch:
+cd warp-client && git checkout ros1 && cd ..
 ```
 2. Build and run the docker container with this demo setup: this includes ROS1 dependencies, the setup of a ROS workspace with the turtle_odometry package sourced, as well as proper mounting of volumes to make development easier and aliases.
 ```
@@ -44,16 +46,30 @@ Now you are within the docker container, where all development can happen (ROS c
 ```
 cd /warp-client && pip install -e . && cd
 ```
-(or use the convenience alias, `ww`)
+(or use the convenience alias: `ww`)
 
-Then, create an account and run Step 1 and Step 2 of the instructions at `https://app.artefacts.com` (everything always within the docker container). This is the Dashboard in the cloud.
+Then, create an account and run Step 1 and Step 2 of the instructions at `https://app.artefacts.com` (everything always within the docker container).
 
 Finally, go to the folder containing our warp.yaml config file and run your first test with :
 ```
-cd `ros_workspace/src/turtle_odometry/test/`
+cd ros_workspace/src/turtle_odometry/test/
 warpcli run basic_turtle
 ```
 
 You will see the turtlesim window appear and the turtle perform a square trajectory. You will see a printout of the result of the test such as `SUCCESS`. Head over to the Dashboard to see the test results and all logged data.
 
 You can play around and change the parameters of the warp.yaml file: for example change the starting position of the turtle or the segment_length of its trajectory (keep in mind that the size of the turtlesim environment is just 11 by 11m meters, with x,y = 0,0 at the bottom left).
+
+
+## Under the Hood
+Explanations of what happens under the hood to adapt it to your own use cases (with turtlesim or another simulator!)
+
+Artefact can be used with any ROS1 package properly configured in a ROS1 workspace (properly sourced)
+
+Here we use our simple `turtle_odometry` package. The important files are:
+- a `warp.yaml` config file. This is the heart of automating everything else. See the config documentation (TODO).
+- two settings are mandatory to run tests: `ros1_testpackage` (just the name of the ROS package with your user files) and `ros1_testfile` (a regular ROS launch file that specifies both the `<node>` nodes of the tech stack you want to test and the `<test>` node containing the logic for your tests)
+- in this demo, the tech stack is just a node that calculates the odometry of the turtle over time `turtle_odom.py`. This could be any other arbitrary tech stack (e.g an entire ROS navigation pipeline)
+- in this demo, the test node is `TestTurtle.py`. Its responsibility is to follow the [rostest conventions](http://wiki.ros.org/rostest): define a test class (that inherits from unittest.TestCase), with (optional) SetUp() and tearDown() and test case methods (that start with `test_`). Here the SetUp() makes sure the starting position of the turtle and settings of the simulator are as specified in the warp.yaml. the test_turtle() method simply commands the turtle to perform a square trajectory and then performs several `assert` statements to check test success.
+- The `params` have two purposes. First they are made available as rosparams during the test execution to control the behavior of your nodes. You can use forward slash separators to have nested name spaces (do not use nested dictionaries). Second if parameters are passed as lists, then Artefact will interpret them as a gridsearch and will automatically execute the test for each possible combination of parameters in the list. All test results will be in the dashboard. This makes tuning parameters very convenient!
+- the setting `ros1_post_process` is an independent script that will run after the test is stopped and will use the rosbag created as input. Any output file created by this script will be uploaded to the cloud dashboard. This is great to plot figures/graphs that will be rendered in the dashboard.
