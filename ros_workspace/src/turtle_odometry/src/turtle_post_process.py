@@ -189,3 +189,32 @@ fig = px.scatter(
     range_y=[-1, 10]
 )
 fig.write_html(args['out_folder'] + "/error_orientation_distance.html")
+
+# plot the trajectory (ground truth and estimated)
+fig = go.Figure()
+fig.add_trace(go.Scatter(
+    x=[match['groundtruth'].message.x for match in matched_messages],
+    y=[match['groundtruth'].message.y for match in matched_messages],
+    mode='lines+markers',
+    name='groundtruth'
+))
+fig.add_trace(go.Scatter(
+    x=[match['estimated'].message.x for match in matched_messages],
+    y=[match['estimated'].message.y for match in matched_messages],
+    mode='lines+markers',
+    name='estimated odometry'
+))
+fig.update_layout(
+    title=f"Turtle trajectory: ground truth vs estimated from odometry",
+    xaxis_title='x',
+    yaxis_title='y',
+    margin_t=30,
+    margin_b=0,
+    margin_l=0,
+    margin_r=0
+)
+fig.update_yaxes(
+    scaleanchor = "x",
+    scaleratio = 1,
+)
+fig.write_html(args['out_folder'] + "/_trajectory.html")
