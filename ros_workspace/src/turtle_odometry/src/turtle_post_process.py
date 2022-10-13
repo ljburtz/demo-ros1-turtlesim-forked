@@ -10,6 +10,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 import argparse
 
+DEG2RAD = np.pi / 180.
+
 parser = argparse.ArgumentParser(description="turtle post processing")
 parser.add_argument("--bag_path", help="path to input ROS bag")
 parser.add_argument("--out_folder", help="folder path for outputs (e.g .html files)")
@@ -141,12 +143,12 @@ start_time = matched_messages[0]['groundtruth'].timestamp.to_sec()
 fig = px.scatter(
     x=[match['groundtruth'].timestamp.to_sec() - start_time for match in matched_messages],
     y=[
-        error_yaw(match['groundtruth'], match['estimated'])
+        error_yaw(match['groundtruth'], match['estimated']) / DEG2RAD
         for match in matched_messages
     ],
-    title=f"Yaw orientation error over time <br>Final error = {error_yaw(matched_messages[-1]['groundtruth'], matched_messages[-1]['estimated']) * 180 / np.pi:.2f} deg",
+    title=f"Yaw orientation error over time <br>Final error = {error_yaw(matched_messages[-1]['groundtruth'], matched_messages[-1]['estimated']) / DEG2RAD:.2f} deg",
     labels={'x': 'time (s)', 'y': 'error (degrees)'},
-    range_y=[-.01, .1]
+    range_y=[-1, 10]
 )
 fig.write_html(args['out_folder'] + "/error_orientation_time.html")
 
@@ -160,7 +162,7 @@ start_time = distance_list[0]['timestamp'].to_sec()
 fig = px.scatter(
     x=[_['timestamp'].to_sec() - start_time for _ in distance_list],
     y=[_['cummulated_distance'] for _ in distance_list],
-    title=f"Distance travelled over time <br>Total distance:{total_distance:.1f} m",
+    title=f"Distance travelled over time <br>Total distance = {total_distance:.1f} m",
     labels={'x': 'timestamp (s)', 'y': 'cummulated distance (m)'}
 )
 fig.write_html(args['out_folder'] + "/distance_travelled.html")
@@ -171,7 +173,7 @@ fig = px.scatter(
         error_horiz(match['groundtruth'], match['estimated'])
         for match in matched_messages
     ],
-    title="Horizontal error over distance travelled",
+    title=f"Horizontal error over distance travelled <br>Final error = { error_horiz(matched_messages[-1]['groundtruth'], matched_messages[-1]['estimated']):.2f} m",
     labels={'x': 'distance travelled (m)', 'y': 'error (m)'}
 )
 fig.write_html(args['out_folder'] + "/error_horiz_distance.html")
@@ -179,11 +181,11 @@ fig.write_html(args['out_folder'] + "/error_horiz_distance.html")
 fig = px.scatter(
     x=[_['cummulated_distance'] for _ in distance_list],
     y=[
-        error_yaw(match['groundtruth'], match['estimated'])
+        error_yaw(match['groundtruth'], match['estimated']) / DEG2RAD
         for match in matched_messages
     ],
-    title="Yaw orientation error over distance travelled",
+    title=f"Yaw orientation error over distance travelled <br>Final error = {error_yaw(matched_messages[-1]['groundtruth'], matched_messages[-1]['estimated']) / DEG2RAD:.2f} deg",
     labels={'x': 'distance travelled (m)', 'y': 'error (degrees)'},
-    range_y=[-.01, .1]
+    range_y=[-1, 10]
 )
-fig.write_html(args['out_folder'] + "/error_yaw_distance.html")
+fig.write_html(args['out_folder'] + "/error_orientation_distance.html")
