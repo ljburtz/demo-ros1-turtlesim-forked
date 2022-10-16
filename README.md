@@ -23,7 +23,7 @@ After a one-time investment into setting up appropriate configurations (the arte
 - **Log Results**: All artifacts created during the test are uploaded to the cloud and displayed in a Dashboard. E.g the ROSbag can be conveniently downloaded for future analysis / html figures are rendered. A share-able link can be used to invite collaborators to view test results.
 - **Iterate tests over several parameters**: Parameters in the .yaml config file can be specified as a list of possible values. Then all of the above process will run for each combination of the parameters (grid search). All the data from each test will be automatically viewable in the cloud Dashboard.
 
-For more insight into how artefact simplifies manual robotics development tasks see [README_comparison](README_comparison.md)
+For more insight into how artefact simplifies manual robotics development tasks see ["Approach to Robotics Testing, a Comparison"](README_comparison.md)
 
 
 

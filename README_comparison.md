@@ -52,6 +52,7 @@ Removes the cognitive load + guarantees timing and proper execution of all steps
 
 - Tune PID gains of motor controllers
 - Tune a kalman filter (e.g [ROS robot localization package](http://docs.ros.org/en/noetic/api/robot_localization/html/index.html)) by doing several tests to explore the parameter space
+- Reproducibility analysis: given the same inputs (trajectory/speed/terrain) how much do the outputs/metrics vary? (many robotics and simulation processes are not deterministic)
 - Evaluate rover odometry performance across several trajectories (some trajectories are shorter/longer, with craters/hills/obstacles
 - ... many others!
 
