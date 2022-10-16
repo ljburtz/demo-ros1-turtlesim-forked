@@ -41,6 +41,7 @@ echo "alias tt='tmux new'" >> ~/.bashrc
 echo "alias rc='roscore &'" >> ~/.bashrc
 echo "alias ts='rosrun turtlesim turtlesim_node'" >> ~/.bashrc
 echo "alias ww='cd /warp-client && pip install -e . && cd'" >> ~/.bashrc
+echo "alias cdw='cd ~/ros_workspace/src/turtle_odometry/test'" >> ~/.bashrc
 
 # Setup rqt and plotjuggler for high DPI screens
 echo "alias rqt_graph='QT_SCALE_FACTOR=1.5 rqt_graph'" >> ~/.bashrc

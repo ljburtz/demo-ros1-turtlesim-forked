@@ -6,10 +6,10 @@ ENV IGN_IP="127.0.0.1"
 
 # common tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3-pip apt-utils \
-    unzip htop wget curl tmux \
-    python3-catkin-tools python3-osrf-pycommon \
-    && rm -rf /var/lib/apt/lists/*
+  python3-pip apt-utils \
+  unzip htop wget curl tmux \
+  python3-catkin-tools python3-osrf-pycommon \
+  && rm -rf /var/lib/apt/lists/*
 
 # User defaults given here, can be easily overriden in docker-compose.yml
 ARG usr_name="turtle"
@@ -39,13 +39,19 @@ RUN mkdir -p ${HOME}/ros_workspace/src && \
 RUN pip3 install --user --upgrade numpy jupyter notebook ruamel.yaml matplotlib bqplot ipywidgets voila setuptools pyyaml
 RUN jupyter nbextension enable --user --py widgetsnbextension \
   &&  jupyter serverextension enable --user voila
-RUN pip3 install --user \
+RUN pip3 install --user --upgrade \
   transforms3d \
   ipympl \
   plotly \
-  tqdm
+  tqdm \
+  python-dateutil
 RUN jupyter nbextension install --user --py ipympl \
   && jupyter nbextension enable --user --py ipympl
+
+RUN sudo apt-get update -y && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  ros-noetic-plotjuggler-ros \
+  && sudo rm -rf /var/lib/apt/lists/* \
+  && sudo apt-get clean
 
 ## KEEP THESE LINES LAST:
 ## Use these lines for quick install of pip and apt packages during experimentation:
@@ -55,10 +61,7 @@ RUN jupyter nbextension install --user --py ipympl \
 #   <package> \
 # && sudo rm -rf /var/lib/apt/lists/* \
 # && sudo apt-get clean
-RUN sudo apt-get update -y && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
-  ros-noetic-plotjuggler-ros \
-&& sudo rm -rf /var/lib/apt/lists/* \
-&& sudo apt-get clean
+
 
 COPY --chown=${usr_name}:${usr_group} entrypoint.bash /entrypoint.bash
 ENTRYPOINT ["/entrypoint.bash"]
