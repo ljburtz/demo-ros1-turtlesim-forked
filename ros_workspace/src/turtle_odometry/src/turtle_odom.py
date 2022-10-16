@@ -6,6 +6,7 @@ from turtlesim.msg import Pose as TurtlePose
 import random
 import numpy as np
 
+
 class TurtleOdom():
     def __init__(self, name):
         self.name = name
@@ -33,8 +34,17 @@ class TurtleOdom():
             self.cb_reset_odom
         )
 
-        # for demo purposes: mock odometry
+        ## For demo purposes: mock odometry
         # subscribe to pose ground truth and register a callback that will add noise and calculate the odometry
+
+        # first: get the noise parameters from the rosparam server (this allows to mimick tuning the odometry algorithm)
+        while not rospy.has_param('test/odom_tuning_theta'):
+            rospy.sleep(0.1)
+        while not rospy.has_param('test/odom_tuning_forward'):
+            rospy.sleep(0.1)
+        self.noise_factor_theta = rospy.get_param('test/odom_tuning_theta', 0.01)
+        self.noise_factor_forward = rospy.get_param('test/odom_tuning_forward', 0.1)
+        # second: compute the odometry in the callback
         self.sub_pose = rospy.Subscriber(
             f'/{self.name}/pose',
             TurtlePose,
@@ -65,17 +75,16 @@ class TurtleOdom():
         else:
             return
 
-        # first, mock an odometry input from the ground truth (+ noise)
+        # first, mock an odometry input from the ground truth
         delta_theta = odom.theta - self.prev_pose.theta
         delta_x = odom.x - self.prev_pose.x
         delta_y = odom.y - self.prev_pose.y
         delta_forward = np.sqrt(delta_x**2 + delta_y**2)
         self.prev_pose = odom
 
-        noise_factor_theta = 0.01
-        noise_factor_forward = 0.1
-        noise_theta = noise_factor_theta * random.uniform(-1, 1)
-        noise_forward = noise_factor_forward * random.uniform(-1, 1)
+        # add noise
+        noise_theta = self.noise_factor_theta * random.uniform(-1, 1)
+        noise_forward = self.noise_factor_forward * random.uniform(-1, 1)
 
         odom_theta = delta_theta * (1 + noise_theta)
         odom_forward = delta_forward * (1 + noise_forward)

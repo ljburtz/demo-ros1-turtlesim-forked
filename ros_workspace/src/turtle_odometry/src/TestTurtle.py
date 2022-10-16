@@ -29,9 +29,9 @@ class TestTurtle(unittest.TestCase):
         self.srv_set_pen(r=255, g=255, b=255, width=5, off=False)
         while not rospy.has_param('test/start_pose'):
             rospy.sleep(0.1)
-        start_pose = rospy.get_param('test/start_pose', [1, 1, 0])
         while not rospy.has_param('test/segment_length'):
             rospy.sleep(0.1)
+        start_pose = rospy.get_param('test/start_pose', [1, 1, 0])
         self.segment_length = rospy.get_param('test/segment_length', 5.)
         self.start_pose = dict(zip(['x', 'y', 'theta'], start_pose))
         self.srv_teleport_absolute(

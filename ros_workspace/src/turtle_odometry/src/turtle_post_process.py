@@ -69,6 +69,7 @@ def match_lookup(lookup_time, lookup_list, previous_index, max_search=100):
     within previous_index and previous_index + max_search
     checks the previous message too. returns whichever is the closest to the lookup_time
     '''
+    assert len(lookup_list) > previous_index, f"previous index = {previous_index} is beyond bounds of lookup list of length {len(lookup_list)}"
     time_delta = -1  # initialize as negative
     i = previous_index
     while time_delta < 0 and i < previous_index + max_search:  # lookup_list time is before lookup_time
