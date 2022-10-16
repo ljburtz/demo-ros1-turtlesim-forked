@@ -1,5 +1,5 @@
 # demo-ros1-turtlesim
-## Overview: a development environment for demontrating the Artefact platform with ROS 1.
+## Overview: a Development Environment for Demontrating the Artefact Platform with ROS 1.
 
 For maximum simplicity, this demo uses the turtlesim simulator.
 ![Turtlesim](./images/Turtlesim.png)
@@ -23,7 +23,7 @@ After a one-time investment into setting up appropriate configurations (the arte
 - **Log Results**: All artifacts created during the test are uploaded to the cloud and displayed in a Dashboard. E.g the ROSbag can be conveniently downloaded for future analysis / html figures are rendered. A share-able link can be used to invite collaborators to view test results.
 - **Iterate tests over several parameters**: Parameters in the .yaml config file can be specified as a list of possible values. Then all of the above process will run for each combination of the parameters (grid search). All the data from each test will be automatically viewable in the cloud Dashboard.
 
-For more insight into how artefact simplifies manual robotics development tasks see [TODO](https://TODO)
+For more insight into how artefact simplifies manual robotics development tasks see [README_comparison](README_comparison.md)
 
 
 
@@ -64,12 +64,12 @@ You can play around and change the parameters of the warp.yaml file: for example
 ## Under the Hood
 Explanations of what happens under the hood to adapt it to your own use cases (with turtlesim or another simulator!)
 
-Artefact can be used with any ROS1 package properly configured in a ROS1 workspace (properly sourced)
+Artefact can be used with any ROS1 package properly configured in a ROS1 workspace (= properly sourced ROS workspace).
 
 Here we use our simple `turtle_odometry` package. The important files are:
 - a `warp.yaml` config file. This is the heart of automating everything else. See the config documentation (TODO).
 - two settings are mandatory to run tests: `ros1_testpackage` (just the name of the ROS package with your user files) and `ros1_testfile` (a regular ROS launch file that specifies both the `<node>` nodes of the tech stack you want to test and the `<test>` node containing the logic for your tests)
 - in this demo, the tech stack is just a node that calculates the odometry of the turtle over time `turtle_odom.py`. This could be any other arbitrary tech stack (e.g an entire ROS navigation pipeline)
 - in this demo, the test node is `TestTurtle.py`. Its responsibility is to follow the [rostest conventions](http://wiki.ros.org/rostest): define a test class (that inherits from unittest.TestCase), with (optional) SetUp() and tearDown() and test case methods (that start with `test_`). Here the SetUp() makes sure the starting position of the turtle and settings of the simulator are as specified in the warp.yaml. the test_turtle() method simply commands the turtle to perform a square trajectory and then performs several `assert` statements to check test success.
-- The `params` have two purposes. First they are made available as rosparams during the test execution to control the behavior of your nodes. You can use forward slash separators to have nested name spaces (do not use nested dictionaries). Second if parameters are passed as lists, then Artefact will interpret them as a gridsearch and will automatically execute the test for each possible combination of parameters in the list. All test results will be in the dashboard. This makes tuning parameters very convenient!
-- the setting `ros1_post_process` is an independent script that will run after the test is stopped and will use the rosbag created as input. Any output file created by this script will be uploaded to the cloud dashboard. This is great to plot figures/graphs that will be rendered in the dashboard.
+- The `params` have two purposes. First they are made available as rosparams during the test execution (can be used to control the behavior of your nodes). You can use forward slash separators to have nested name spaces (do not use nested dictionaries). Second if parameters are passed as lists, then Artefact will interpret them as a gridsearch and will automatically execute the test for each possible combination of parameters in the list. All test results will be in the dashboard. This makes tuning parameters very convenient!
+- the setting `ros1_post_process` points to an independent script that will run after the test is stopped and will use the rosbag created as input. Any output file created by this script will be uploaded to the cloud dashboard. This is great to plot figures/graphs that will be rendered in the dashboard.
