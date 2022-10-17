@@ -36,9 +36,8 @@ RUN mkdir -p ${HOME}/ros_workspace/src && \
   mkdir -p ${HOME}/.gazebo
 
 ## Install jupyter notebook
-RUN pip3 install --user --upgrade numpy jupyter notebook ruamel.yaml matplotlib bqplot ipywidgets voila setuptools pyyaml
-RUN jupyter nbextension enable --user --py widgetsnbextension \
-  &&  jupyter serverextension enable --user voila
+RUN pip3 install --user --upgrade numpy jupyter notebook ruamel.yaml matplotlib bqplot ipywidgets setuptools pyyaml
+RUN jupyter nbextension enable --user --py widgetsnbextension
 RUN pip3 install --user --upgrade \
   transforms3d \
   ipympl \
