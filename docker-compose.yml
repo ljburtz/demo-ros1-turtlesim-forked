@@ -30,7 +30,7 @@ services:
       # use alias 'ww' to pip install -e warp-client
       # (the api key and config are mounted from the host)
       - ../warp-client:/warp-client
-      - ~/.warp/config:/home/turtle/.warp/config
+      - ~/.artefacts:/home/turtle/.artefacts
       # sync timezone with host and ensure X11 settings
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
