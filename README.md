@@ -32,8 +32,6 @@ For more insight into how artefact simplifies manual robotics development tasks 
 ```
 git clone git@github.com:art-e-fact/demo-ros1-turtlesim.git
 git clone git@github.com:art-e-fact/warp-client.git
-# [temporary] checkout the ros1 branch:
-cd warp-client && git checkout ros1 && cd ..
 mkdir ~/.artefacts
 ```
 2. Build and run the docker container with this demo setup: this includes ROS1 dependencies, the setup of a ROS workspace with the turtle_odometry package sourced, as well as proper mounting of volumes to make development easier and aliases.
