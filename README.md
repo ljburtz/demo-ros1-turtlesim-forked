@@ -60,6 +60,8 @@ You will see the turtlesim window appear and the turtle perform a square traject
 
 You can play around and change the parameters of the artefacts.yaml file: for example change the starting position of the turtle or the segment_length of its trajectory (keep in mind that the size of the turtlesim environment is just 11 by 11 meters, with x,y = 0,0 at the bottom left).
 
+4. If you encounter any problem, feel free to open up a github issue describing your environment and the error message.
+
 
 ## Under the Hood
 Explanations of what happens under the hood to adapt it to your own use cases (with turtlesim or another simulator!)
