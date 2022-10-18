@@ -7,6 +7,7 @@ includes the launch test file defined by the user
   <arg name="param_file" />
   <arg name="ros1_testpackage" />
   <arg name="ros1_testfile" />
+  <arg name="simulator" />
 
   <!-- provide parameters from artefact.yaml onto rosparam server -->
   <rosparam
@@ -15,11 +16,12 @@ includes the launch test file defined by the user
   />
 
   <!-- provide a simulator environment -->
-  <node
+  <node if="$(eval arg('simulator') == 'turtlesim')"
     name="turtlesim"
     pkg="turtlesim"
     type="turtlesim_node"
   />
+
 
   <!-- provide a data recorder -->
   <node
