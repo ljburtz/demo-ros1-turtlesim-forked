@@ -1,6 +1,6 @@
 version: 0.1.0
 
-project: ros1-turtlesim # change to match your project name in the dashboard
+project: demo-ros1-turtlesim # change to match your project name in the dashboard
 jobs:
   basic_turtle: # Overall job name
     type: test
@@ -29,5 +29,5 @@ jobs:
             test/segment_length: 5  # for square trajectory
             test/odom_tuning_theta: 0.01   # demo: tune odometry algorithm
             test/odom_tuning_forward: 0.1  # demo: tune odometry algorithm
-            #test/odom_tuning_theta: [0, 0.01, 0.1]   # demo: tune odometry algorithm
-            #test/odom_tuning_forward: [0, 0.1, 0.5]  # demo: tune odometry algorithm
+            # test/odom_tuning_theta: [0, 0.01, 0.1]   # demo: tune odometry algorithm
+            # test/odom_tuning_forward: [0, 0.1, 0.5]  # demo: tune odometry algorithm
