@@ -9,6 +9,7 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 import argparse
+import sys
 
 DEG2RAD = np.pi / 180.
 
@@ -19,13 +20,29 @@ args = vars(parser.parse_args())
 
 # choose topics to extract from rosbag
 ROBOT = "turtle1"
-estimated_topic = f"/{ROBOT}/pose"
-groundtruth_topic = f"/{ROBOT}/odometry"
+estimated_topic = f"{ROBOT}/pose"
+groundtruth_topic = f"{ROBOT}/odometry"
+
+# make sure topics are in rosbag: adjust if needed, quit otherwise
+topics = rosbag.Bag(args['bag_path']).get_type_and_topic_info()[1].keys()
+def adjust_topic(topic, topics):
+    if topic not in topics:  # "try to add or remove the leading slash"
+        if topic[0] == '/':
+            topic = topic[1:]
+        else:
+            topic = '/' + topic
+    if topic in topics:
+        return topic
+    else:
+        print(f"[in post-process] topic {topic} not found in rosbag topic list {topics}. Exiting..")
+        sys.exit()
+estimated_topic = adjust_topic(estimated_topic, topics)
+groundtruth_topic = adjust_topic(groundtruth_topic, topics)
 
 # preliminary check: make sure bag indexes are in increasing time order
 with rosbag.Bag(args['bag_path'], 'r') as bag:
     timelist = [msg.timestamp.to_sec() for msg in bag.read_messages()]
-assert(timelist == sorted(timelist))
+assert timelist == sorted(timelist)
 
 # extract messages from rosbag
 estimated_messages = []
@@ -115,7 +132,12 @@ for msg in estimated_messages:
             'groundtruth': matched_msg
         }
 )
-assert(len(matched_messages) == len(estimated_messages))
+assert len(matched_messages) == len(estimated_messages)
+N = 50
+assert len(matched_messages) > N, f"[error in turtle_post_process] not enough matched messages found"
+# remove garbage messages logged during test setup
+# @TODO replace hard-coded assumption of N first messages with an event trigger
+matched_messages = matched_messages[N:]
 
 
 # plot time deltas between matched messages to verify correct match
@@ -125,7 +147,7 @@ fig = px.scatter(
     title=f"Time delta for each matched pair of messages <br>Max time delta = {max([abs(t) for t in time_deltas])*1000:.0f} ms",
     labels={'value': 'time delta (s)'}
 )
-fig.write_html(args['out_folder'] + "/time_deltas.html")
+fig.write_html(args['out_folder'] + "/mtime_deltas.html")
 
 # plot metrics as a function of test time
 start_time = matched_messages[0]['groundtruth'].timestamp.to_sec()
@@ -157,7 +179,7 @@ fig.write_html(args['out_folder'] + "/error_orientation_time.html")
 distance_list = compute_distance_travelled(
     [match['groundtruth'] for match in matched_messages]
 )
-assert(len(distance_list) == len(matched_messages))
+assert len(distance_list) == len(matched_messages)
 total_distance = distance_list[-1]['cummulated_distance']
 start_time = distance_list[0]['timestamp'].to_sec()
 fig = px.scatter(
